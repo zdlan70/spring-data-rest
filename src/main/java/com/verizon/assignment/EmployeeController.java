@@ -38,6 +38,19 @@ public class EmployeeController {
 		return "Employee saved: " + employee.toString();
 	}
 
+
+	@RequestMapping("/employee/update")
+	public String update(
+			@RequestParam(value = "id") long id,
+			@RequestParam(value = "salary") double salary) {
+		
+		
+		Employee employee = employeeRepository.findOne(id);
+		employee.setSalary(salary);;
+		employeeRepository.save(employee);
+		return "Employee saved: " + employee.toString();
+	}
+	
 	@RequestMapping(value = "/employee/queryWithId")
 	public String findOne(@RequestParam(value = "id") long id) {
 		// TODO Auto-generated method stub
