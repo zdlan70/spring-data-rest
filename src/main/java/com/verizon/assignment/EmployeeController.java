@@ -29,28 +29,32 @@ public class EmployeeController {
 			@RequestParam(value = "salary") double salary,
 			@RequestParam(required = false, value = "department") Long departmentId,
 			@RequestParam(required = false, value = "manager") Long managerId) {
-		
-		Department department = departmentId != null ? departmentRepository.findOne(departmentId) : null;
-		Employee manager = managerId != null ? employeeRepository.findOne(managerId) : null;
+
+		Department department = departmentId != null ? departmentRepository
+				.findOne(departmentId) : null;
+		Employee manager = managerId != null ? employeeRepository
+				.findOne(managerId) : null;
 		Employee employee = new Employee(firstName, lastName, salary,
 				department, manager);
 		employeeRepository.save(employee);
 		return "Employee saved: " + employee.toString();
 	}
 
-
 	@RequestMapping("/employee/update")
-	public String update(
-			@RequestParam(value = "id") long id,
+	public String update(@RequestParam(value = "id") long id,
 			@RequestParam(value = "salary") double salary) {
-		
-		
+
 		Employee employee = employeeRepository.findOne(id);
-		employee.setSalary(salary);;
-		employeeRepository.save(employee);
-		return "Employee saved: " + employee.toString();
+		if (employee != null) {
+			employee.setSalary(salary);
+			;
+			employeeRepository.save(employee);
+			return "Employee saved: " + employee.toString();
+		} else {
+			return "Employee not found for id " + id;
+		}
 	}
-	
+
 	@RequestMapping(value = "/employee/queryWithId")
 	public String findOne(@RequestParam(value = "id") long id) {
 		// TODO Auto-generated method stub
@@ -58,10 +62,22 @@ public class EmployeeController {
 		return findOne == null ? "Not Found" : findOne.toString();
 	}
 
+
+	@RequestMapping(value = "/employee/queryAll")
+	public String findAll() {
+		// TODO Auto-generated method stub
+		return employeeRepository.findAll().toString();
+	}
+
+	
 	@RequestMapping(value = "/employee/delete")
 	public String delete(@RequestParam(value = "id") long id) {
 		// TODO Auto-generated method stub
-		employeeRepository.delete(id);
-		return "Employee with id " + id + " removed";
+		try {
+			employeeRepository.delete(id);
+			return "Employee with id " + id + " removed";
+		} catch (Exception ex) {
+			return "Employee with id " + id + " not found ";
+		}
 	}
 }
